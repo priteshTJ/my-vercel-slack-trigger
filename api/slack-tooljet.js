@@ -1,3 +1,13 @@
+import querystring from 'querystring';
+
+export const config = {
+  api: {
+    bodyParser: {
+      type: 'urlencoded',
+    },
+  },
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
@@ -5,10 +15,10 @@ export default async function handler(req, res) {
 
   const { text = "", user_name = "" } = req.body;
 
-  // Immediately respond to Slack to avoid timeout
+  // Respond to Slack
   res.status(200).send(`✅ Triggered ToolJet with name: "${text}" by @${user_name}`);
 
-  // Fire ToolJet webhook in background
+  // Trigger ToolJet webhook
   try {
     await fetch('https://v3-lts-eetestsystem.tooljet.com/api/v2/webhooks/workflows/d25e2426-2e8c-4547-8802-1a2ad793840d/trigger?environment=development', {
       method: 'POST',
