@@ -1,4 +1,9 @@
 module.exports = async function handler(req, res) {
+
+  res.status(200).json({
+      text: "✅ ToolJet workflow triggered successfully!",
+    });
+  
   try {
     const { text, user_name } = req.body || {};
     const payload = {
