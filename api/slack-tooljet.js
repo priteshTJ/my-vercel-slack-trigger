@@ -1,4 +1,10 @@
 module.exports = async function handler(req, res) {
+
+    res.status(200).json({
+    response_type: "in_channel", // Visible to everyone in the channel
+    text: "⏳ Triggering ToolJet workflow...",
+  });
+
   try {
     const { text, user_name } = req.body || {};
     const payload = {
