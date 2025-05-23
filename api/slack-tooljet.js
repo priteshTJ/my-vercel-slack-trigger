@@ -1,21 +1,13 @@
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};
+// api/slack-tooljet.js
 
 export default async function handler(req, res) {
-  // Respond to Slack immediately
-  res.status(200).send("✅ ToolJet workflow is being triggered...");
-
-  // Continue in background
   try {
-    const { text } = req.body || {};
+    const { text, user_name } = req.body || {};
     const payload = {
       name: text || "No name",
     };
 
-    await fetch("https://v3-lts-eetestsystem.tooljet.com/api/v2/webhooks/workflows/d25e2426-2e8c-4547-8802-1a2ad793840d/trigger?environment=development", {
+    const response = await fetch("https://v3-lts-eetestsystem.tooljet.com/api/v2/webhooks/workflows/d25e2426-2e8c-4547-8802-1a2ad793840d/trigger?environment=development", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,8 +16,14 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`ToolJet trigger failed: ${errorText}`);
+    }
+
+    return res.status(200).send("✅ ToolJet workflow triggered successfully!");
   } catch (err) {
-    console.error("⚠️ ToolJet trigger failed:", err);
-    // You could also log this to a Slack webhook or notify somewhere
+    console.error("ToolJet trigger failed:", err);
+    return res.status(500).send(`❌ Failed to trigger ToolJet workflow: ${err.message}`);
   }
 }
