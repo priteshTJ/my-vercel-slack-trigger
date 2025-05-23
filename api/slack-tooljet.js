@@ -1,14 +1,10 @@
 module.exports = async function handler(req, res) {
-  // Immediately respond to Slack
-  res.status(200).send("✅ Processing your request...");
-
   try {
-    const { text } = req.body || {};
+    const { text, user_name } = req.body || {};
     const payload = {
       name: text || "No name",
     };
 
-    // Trigger ToolJet workflow in the background
     const response = await fetch("https://v3-lts-eetestsystem.tooljet.com/api/v2/webhooks/workflows/d25e2426-2e8c-4547-8802-1a2ad793840d/trigger?environment=development", {
       method: "POST",
       headers: {
@@ -20,9 +16,12 @@ module.exports = async function handler(req, res) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("ToolJet trigger failed:", errorText);
+      throw new Error(`ToolJet trigger failed: ${errorText}`);
     }
+
+    return res.status(200).send("✅ ToolJet workflow triggered successfully!");
   } catch (err) {
-    console.error("ToolJet trigger failed:", err.message);
+    console.error("ToolJet trigger failed:", err);
+    return res.status(500).send(`❌ Failed to trigger ToolJet workflow: ${err.message}`);
   }
 };
