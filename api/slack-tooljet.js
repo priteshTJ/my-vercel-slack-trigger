@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const { text, user_name } = req.body || {};
     const payload = {
@@ -16,12 +16,12 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(ToolJet trigger failed: ${errorText});
+      throw new Error(`ToolJet trigger failed: ${errorText}`);
     }
 
     return res.status(200).send("✅ ToolJet workflow triggered successfully!");
   } catch (err) {
     console.error("ToolJet trigger failed:", err);
-    return res.status(500).send(❌ Failed to trigger ToolJet workflow: ${err.message});
+    return res.status(500).send(`❌ Failed to trigger ToolJet workflow: ${err.message}`);
   }
-}
+};
