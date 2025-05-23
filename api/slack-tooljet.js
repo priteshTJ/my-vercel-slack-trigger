@@ -1,6 +1,7 @@
 module.exports = async function handler(req, res) {
 
-  res.status(200).json({
+res.status(200).json({
+      response_type: "in_channel", // or "ephemeral"
       text: "✅ ToolJet workflow triggered successfully!",
     });
   
